@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exam</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <header>
+        <h1 id="title">eShop</h1>
+        <button id="createBtn">create Product</button>
+    </header>
+
+    <!-- Модальне вікно -->
+    <div class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Create product</div>
+                <button data-close="true">&times;</button>
+            </div>
+            <div class="modal-content">
+                <form id="productForm">
+                    <div class="form-group">
+                        <label for="productTitle">Title:</label>
+                        <input type="text" id="productTitle" name="productTitle" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="productDescription">Description:</label>
+                        <textarea id="productDescription" name="productDescription" rows="3" cols="35"
+                            required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="productPrice">Price:</label>
+                        <input type="number" min="0" step="0.01" id="productPrice" name="productPrice" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="productDiscount">Discount:</label>
+                        <input type="number" min="0" max="100" step="0.1" id="productDiscount" name="productDiscount"
+                            required>
+                    </div>
+                    <div class="form-group">
+                        <label for="productStock">In stock:</label>
+                        <input type="number" id="productStock" name="productStock" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="productBrand">Brand:</label>
+                        <input type="text" id="productBrand" name="productBrand" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="productCategory">Category:</label>
+                        <select name="productCategory" id="productCategory">
+                            <option value="" selected disabled>--- Select category ---</option>
+                            <option value="phones">Smartphones</option>
+                            <option value="laptops">Laptops</option>
+                            <option value="accesories">Accessories</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="productImgLink">Link to picture:</label>
+                        <input type="url" id="productImgLink" name="productImgLink"
+                            placeholder="https://example.com/image.jpg" required>
+                    </div>
+
+                    <button type="submit" id="submitBtn">Save product</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="js/main.js"></script>
+</body>
+
+</html>
