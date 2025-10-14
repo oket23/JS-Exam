@@ -94,14 +94,14 @@ export class ProductService {
                     this.products[productIndex] = {
                         ...this.products[productIndex],
                         ...data,
-                        updatedAt: currentTime
+                        updatedAt: new Date().toISOString()
                     };
                 }
             }
             else {
                 data.id = crypto.randomUUID();
-                data.createdAt = currentTime;
-                data.updatedAt = currentTime;
+                data.createdAt = new Date().toISOString();
+                data.updatedAt = new Date().toISOString();
                 this.products.push(data);
             }
 
