@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Exam</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 
 <body>
@@ -14,7 +15,15 @@
         <h1 id="title">eShop</h1>
         <button id="createBtn">create Product</button>
     </header>
-
+    <div id="confirmOverlay" class="confirm-overlay">
+        <div class="confirm-modal">
+            <p id="confirmMessage" class="confirm-message">Ви впевнені, що хочете видалити цей продукт?</p>
+            <div class="confirm-buttons">
+                <button id="confirmBtnYes" class="confirm-btn confirm-yes">Так, видалити</button>
+                <button id="confirmBtnNo" class="confirm-btn confirm-no">Скасувати</button>
+            </div>
+        </div>
+    </div>
     <!-- Модальне вікно -->
     <div class="modal-overlay">
         <div class="modal">
@@ -26,43 +35,50 @@
                 <form id="productForm">
                     <div class="form-group">
                         <label for="productTitle">Title:</label>
-                        <input type="text" id="productTitle" name="productTitle" required>
+                        <div class="field-group">
+                            <input type="text" id="productTitle" minlength="2" name="productTitle" required>
+                            <small class="error"></small>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label for="productDescription">Description:</label>
-                        <textarea id="productDescription" name="productDescription" rows="3" cols="35"
-                            required></textarea>
+                        <div class="field-group">
+                            <textarea id="productDescription" minlength="1" name="productDescription" rows="3" cols="35" required></textarea>
+                            <small class="error"></small>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label for="productPrice">Price:</label>
-                        <input type="number" min="0" step="0.01" id="productPrice" name="productPrice" required>
+                        <div class="field-group">
+                            <input type="number" min="0.1" step="0.01" id="productPrice" name="productPrice" required>
+                            <small class="error"></small>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label for="productDiscount">Discount:</label>
-                        <input type="number" min="0" max="100" step="0.1" id="productDiscount" name="productDiscount"
-                            required>
-                    </div>
-                    <div class="form-group">
-                        <label for="productStock">In stock:</label>
-                        <input type="number" id="productStock" name="productStock" min="0" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="productBrand">Brand:</label>
-                        <input type="text" id="productBrand" name="productBrand" required>
+                        <div class="field-group">
+                            <input type="number" min="0.1" max="100" step="0.1" id="productDiscount" name="productDiscount" required>
+                            <small class="error"></small>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label for="productCategory">Category:</label>
-                        <select name="productCategory" id="productCategory">
-                            <option value="" selected disabled>--- Select category ---</option>
-                            <option value="phones">Smartphones</option>
-                            <option value="laptops">Laptops</option>
-                            <option value="accesories">Accessories</option>
-                        </select>
+                        <div class="field-group">
+                            <select name="productCategory" id="productCategory" required>
+                                <option value="" selected disabled>--- Select category ---</option>
+                                <option value="phones">Smartphones</option>
+                                <option value="laptops">Laptops</option>
+                                <option value="accesories">Accessories</option>
+                            </select>
+                            <small class="error"></small>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label for="productImgLink">Link to picture:</label>
-                        <input type="url" id="productImgLink" name="productImgLink"
-                            placeholder="https://example.com/image.jpg" required>
+                        <div class="field-group">
+                            <input type="url" id="productImgLink" name="productImgLink" placeholder="https://example.com/image.jpg" required>
+                            <small class="error"></small>
+                        </div>
                     </div>
 
                     <button type="submit" id="submitBtn">Save product</button>
@@ -70,7 +86,12 @@
             </div>
         </div>
     </div>
-    <script src="js/main.js"></script>
+    <!---->
+    <div class="products-container">
+
+    </div>
+
+    <script type="module" src="js/main.js" defer></script>
 </body>
 
 </html>

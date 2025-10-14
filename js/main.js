@@ -1,40 +1,39 @@
-const products = []; 
+import { CardService } from './CardService.js';
+import { ProductService } from './ProductService.js';
+import { ProductValidator } from './ProductValidator.js';
+import { ConfirmationService } from './ConfirmationService.js';
 
-const createBtn = document.getElementById("createBtn");
-const modalOverlay = document.getElementsByClassName('modal-overlay')[0];
-const form = document.getElementById("productForm");
-const submitBtn = document.getElementById("submitBtn");
-
-function openModal() {
-    modalOverlay.style.display = "grid";
-}
-
-function closeModal() {
-    modalOverlay.style.display = "none";
-    form.reset();
-}
-
-createBtn.addEventListener("click", openModal);
-
-modalOverlay.addEventListener("click", (e) => {
-    if (e.target.dataset.close || e.target === modalOverlay) {
-        closeModal();
+const productService = new ProductService({ 
+    submitBtnSelector: "#submitBtn",
+    createBtnSelector: "#createBtn",
+    modalOverlaySelector: ".modal-overlay",
+    formSelector: "#productForm",
+    validator: ProductValidator.validateField,
+    onProductsChange: (products) => {
+        cardService.render(products);
     }
 });
 
-
-form.addEventListener("submit", (e) => {
-    e.preventDefault();
-
-    const data = Object.fromEntries(new FormData(form).entries());
-    
-    
-    products.push(data);
-    console.log(data);
-
-    closeModal();
+const confirmationService = new ConfirmationService({
+    overlaySelector: '#confirmOverlay',
+    messageSelector: '#confirmMessage',
+    yesBtnSelector: '#confirmBtnYes',
+    noBtnSelector: '#confirmBtnNo'
 });
 
-submitBtn.addEventListener("click", () =>{
-    
-})
+const cardService = new CardService({
+    containerSelector: ".products-container",
+    onEdit: (id) => {
+        productService.editProduct(id);
+    },
+    onDelete: async (id) => {
+        const message = "Ви впевнені, що хочете видалити цей продукт?";
+        const isConfirmed = await confirmationService.confirm(message);
+
+        if (isConfirmed) {
+            productService.deleteProduct(id);
+        }
+    }
+});
+
+cardService.render(productService.getProducts());
