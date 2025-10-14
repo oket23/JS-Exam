@@ -91,11 +91,17 @@ export class ProductService {
             if (this.editingProductId) {
                 const productIndex = this.products.findIndex(p => p.id === this.editingProductId);
                 if (productIndex !== -1) {
-                    this.products[productIndex] = { ...data, id: this.editingProductId };
+                    this.products[productIndex] = {
+                        ...this.products[productIndex],
+                        ...data,
+                        updatedAt: currentTime
+                    };
                 }
-            } 
+            }
             else {
                 data.id = crypto.randomUUID();
+                data.createdAt = currentTime;
+                data.updatedAt = currentTime;
                 this.products.push(data);
             }
 
@@ -105,7 +111,7 @@ export class ProductService {
             }
 
             this.closeModal();
-        } 
+        }
         else {
             this.toggleSubmitBtn();
         }
@@ -133,7 +139,7 @@ export class ProductService {
 
         this.openModal();
     }
-    
+
     deleteProduct(id) {
         const productIndex = this.products.findIndex(p => p.id === id);
 
