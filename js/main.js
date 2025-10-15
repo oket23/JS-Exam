@@ -2,6 +2,7 @@ import { CardService } from './CardService.js';
 import { ProductService } from './ProductService.js';
 import { ProductValidator } from './ProductValidator.js';
 import { ConfirmationService } from './ConfirmationService.js';
+import { FilterService } from './FilterService.js';
 
 const productService = new ProductService({ 
     submitBtnSelector: "#submitBtn",
@@ -36,4 +37,29 @@ const cardService = new CardService({
     }
 });
 
-cardService.render(productService.getProducts());
+const filterService = new FilterService({
+    categorySelector: 'select[name="sortCategory"]',
+    searchSelector: 'input[name="searchProduct"]',
+    sortSelector: 'select[name="sortModes"]',
+    onFilterChange: (filters) => {
+        updateView(filters);
+    }
+});
+
+function updateView(filters = {}) {
+    const allProducts = productService.getProducts();
+    const productsToRender = filterService.apply(allProducts, filters);
+    cardService.render(productsToRender);
+}
+
+productService.onProductsChange = () => {
+    const currentFilters = {
+        category: document.querySelector('select[name="sortCategory"]').value,
+        searchTerm: document.querySelector('input[name="searchProduct"]').value,
+        sortMode: document.querySelector('select[name="sortModes"]').value
+    };
+    updateView(currentFilters);
+};
+
+updateView();
+
