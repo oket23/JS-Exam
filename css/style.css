@@ -14,17 +14,18 @@ header {
 
 header #title {
     color: white;
-    font-size: 15px;
+    font-size: 30px;
     font-weight: 100;
     margin: 5px;
 }
 
 header #createBtn {
     color: white;
+    font-size: 25px;
     border-color: white;
     border: 1px solid rgba(255, 255, 255, 0.548);
     background-color: grey;
-    padding: 5px;
+    padding: 0 15px;
     cursor: pointer;
     border-radius: 5px;
     transition-duration: 0.2s;
@@ -312,4 +313,23 @@ header #createBtn:hover {
 
 .confirm-no {
     background-color: #6c757d; 
+}
+
+
+.sort-container {
+    display: grid; 
+    grid-template-columns: 1fr 2fr 1fr; 
+    gap: 15px;
+    align-items: center;
+    padding: 10px;
+    background-color: rgba(128, 128, 128, 0.685);
+}
+
+.sort-container select,
+.sort-container input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
 }

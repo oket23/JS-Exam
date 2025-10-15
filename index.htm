@@ -15,6 +15,31 @@
         <h1 id="title">eShop</h1>
         <button id="createBtn">create Product</button>
     </header>
+    <div class="sort-container">
+        <div class="sort-group">
+            <select name="sortCategory" id="sortCategory">
+                <option value="">-- All category --</option>
+                <option value="phones">Smartphones</option>
+                <option value="laptops">Laptops</option>
+                <option value="fragrances">Fragrances</option>
+                <option value="skincare">Skincare</option>
+                <option value="groceries">Groceries</option>
+                <option value="home-decoration">Home-decoration</option>
+            </select>                 
+        </div>
+        <div class="sort-group">
+            <input type="text" name="searchProduct" placeholder="-- search product --">
+        </div>  
+        <div class="sort-group">
+            <select name="sortModes" id="sortModes">
+                <option value="">-- Sort products (Don't sort) --</option>
+                <option value="increasingPrice">by increasing price</option>
+                <option value="decreasingPrice">by decreasing price</option>
+                <option value="newest">newest first</option>
+                <option value="oldest">oldest first</option>
+            </select>   
+        </div>                          
+    </div>
     <div id="confirmOverlay" class="confirm-overlay">
         <div class="confirm-modal">
             <p id="confirmMessage" class="confirm-message">Ви впевнені, що хочете видалити цей продукт?</p>
