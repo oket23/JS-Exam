@@ -3,6 +3,10 @@ import { ProductService } from './ProductService.js';
 import { ProductValidator } from './ProductValidator.js';
 import { ConfirmationService } from './ConfirmationService.js';
 import { FilterService } from './FilterService.js';
+import { PaginationService } from './PaginationService.js';
+
+let currentPage = 1;
+const ITEMS_PER_PAGE = 10; 
 
 const productService = new ProductService({ 
     submitBtnSelector: "#submitBtn",
@@ -46,19 +50,41 @@ const filterService = new FilterService({
     }
 });
 
-function updateView(filters = {}) {
-    const allProducts = productService.getProducts();
-    const productsToRender = filterService.apply(allProducts, filters);
-    cardService.render(productsToRender);
-}
+const paginationService = new PaginationService({
+    containerSelector: '#pagination-container',
+    onPageChange: (newPage) => {
+        currentPage = newPage;
+        updateView(); 
+    }
+});
 
-productService.onProductsChange = () => {
+function updateView() {
+    const allProducts = productService.getProducts();
+    
     const currentFilters = {
         category: document.querySelector('select[name="sortCategory"]').value,
         searchTerm: document.querySelector('input[name="searchProduct"]').value,
         sortMode: document.querySelector('select[name="sortModes"]').value
     };
-    updateView(currentFilters);
+    
+    const filteredProducts = filterService.apply(allProducts, currentFilters);
+
+    paginationService.render(filteredProducts.length, ITEMS_PER_PAGE, currentPage);
+
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    const endIndex = startIndex + ITEMS_PER_PAGE;
+    const paginatedProducts = filteredProducts.slice(startIndex, endIndex);
+
+    cardService.render(paginatedProducts);
+}
+
+filterService.onFilterChange = (filters) => {
+    currentPage = 1;
+    updateView();
+};
+
+productService.onProductsChange = () => {
+    updateView(); 
 };
 
 updateView();

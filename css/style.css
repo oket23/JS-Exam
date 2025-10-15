@@ -158,13 +158,17 @@ header #createBtn:hover {
 }
 
 .products-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center; 
+
     gap: 20px;
     padding: 20px;
 }
 
 .card {
+    flex-basis: 220px; 
+    
     position: relative;
     background: #fff;
     border-radius: 20px;
@@ -332,4 +336,46 @@ header #createBtn:hover {
     border: 1px solid #ccc;
     border-radius: 4px;
     font-size: 16px;
+}
+
+/* --- СТИЛІ ДЛЯ ПАГІНАЦІЇ --- */
+
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    gap: 5px;
+}
+
+.pagination-container .page-btn {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #fff;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.2s;
+}
+
+.pagination-container .page-btn:hover {
+    background-color: #f0f0f0;
+}
+
+.pagination-container .page-btn.active {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+    font-weight: bold;
+}
+
+.pagination-container .page-btn.disabled {
+    cursor: not-allowed;
+    color: #aaa;
+    background-color: #f9f9f9;
+}
+
+.pagination-container .dots {
+    padding: 8px 0;
+    color: #888;
 }
