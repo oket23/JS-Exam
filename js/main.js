@@ -14,7 +14,7 @@ async function main() {
         createBtnSelector: "#createBtn",
         modalOverlaySelector: ".modal-overlay",
         formSelector: "#productForm",
-        apiUrl: "https://dummyjson.com/products",
+        apiUrl: "http://localhost:5100/products",
         validator: ProductValidator.validateField,
     });
 

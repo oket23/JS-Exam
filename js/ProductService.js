@@ -17,6 +17,20 @@ export class ProductService {
         this._initListeners();
     }
 
+    _transformProductData(productFromApi) {
+        return {
+            id: productFromApi.id,
+            productTitle: productFromApi.title,
+            productDescription: productFromApi.description,
+            productPrice: productFromApi.price,
+            productDiscount: productFromApi.discountPercentage,
+            productCategory: productFromApi.category,
+            productImgLink: productFromApi.thumbnail,
+            createdAt: productFromApi.meta.createdAt,
+            updatedAt: productFromApi.meta.updatedAt
+        };
+    }
+
     async init() {
         const savedProductsJSON = localStorage.getItem("products");
         const lastFetchTime = localStorage.getItem("products_last_fetch");
@@ -24,21 +38,21 @@ export class ProductService {
 
         if (savedProductsJSON && lastFetchTime && (Date.now() - lastFetchTime < CACHE_DURATION)) {
             this.products = JSON.parse(savedProductsJSON);
-        } else {
+        } 
+        else {
             try {
                 const response = await fetch(this.apiUrl);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const productsFromApi = await response.json();
-
-                this.products = productsFromApi;
-
+                this.products = productsFromApi.map(p => this._transformProductData(p));
                 localStorage.setItem("products", JSON.stringify(this.products));
                 localStorage.setItem("products_last_fetch", Date.now());
-            } catch (error) {
+            } 
+            catch (error) {
                 console.error("Could not fetch products from API:", error);
-                if (savedProductsJSON) this.products = JSON.parse(savedProductsJSON);
+                this.products = savedProductsJSON ? JSON.parse(savedProductsJSON) : [];
             }
         }
     }
@@ -59,10 +73,7 @@ export class ProductService {
 
     openModal() {
         this.modalOverlay.style.display = "grid";
-        const first = this.form.querySelector("input, textarea, select");
-        if (first) {
-            first.focus();
-        }
+        this.form.querySelector("input, textarea, select")?.focus();
         document.body.style.overflow = "hidden";
         this.toggleSubmitBtn();
     }
@@ -83,11 +94,9 @@ export class ProductService {
     }
 
     _handleFieldValidation(event) {
-        const field = event.target;
-        this.validator(field);
+        this.validator(event.target);
         this.toggleSubmitBtn();
     }
-
 
     async _handleSubmit(e) {
         e.preventDefault();
@@ -100,63 +109,99 @@ export class ProductService {
         if (isValid) {
             const formData = new FormData(this.form);
             const data = Object.fromEntries(formData.entries());
-            data.productPrice = parseFloat(data.productPrice);
-            data.productDiscount = parseFloat(data.productDiscount);
+
+            const dataToSend = {
+                title: data.productTitle,
+                description: data.productDescription,
+                price: parseFloat(data.productPrice),
+                discountPercentage: parseFloat(data.productDiscount), 
+                category: data.productCategory,
+                thumbnail: data.productImgLink,
+                meta: {}
+            };
 
             try {
+                let response;
                 if (this.editingProductId) {
-                    const response = await fetch(`${this.apiUrl}/${this.editingProductId}`, {
+                    const originalProduct = this.products.find(p => p.id === this.editingProductId);
+                    dataToSend.id = this.editingProductId;
+                    dataToSend.meta = {
+                        createdAt: originalProduct.createdAt,
+                        updatedAt: new Date().toISOString()
+                    };
+
+                    response = await fetch(`${this.apiUrl}/${this.editingProductId}`, {
                         method: 'PUT',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(data)
+                        body: JSON.stringify(dataToSend)
                     });
-                    const updatedProduct = await response.json();
-
-                    const productIndex = this.products.findIndex(p => p.id === this.editingProductId);
-                    if (productIndex !== -1) {
-                        this.products[productIndex] = updatedProduct;
-                    }
-                } else {
-                    const response = await fetch(this.apiUrl, {
+                } 
+                else {
+                    response = await fetch(this.apiUrl, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(data)
+                        body: JSON.stringify(dataToSend)
                     });
-                    const newProduct = await response.json();
-                    this.products.push(newProduct);
+                }
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`Server error: ${response.status}. Details: ${errorText}`);
+                }
+                
+                if (response.status === 204) {
+                    const productIndex = this.products.findIndex(p => p.id === this.editingProductId);
+                    if (productIndex !== -1) {
+                        const originalProduct = this.products[productIndex];
+                        this.products[productIndex] = {
+                            ...originalProduct,
+                            productTitle: data.productTitle,
+                            productDescription: data.productDescription,
+                            productPrice: parseFloat(data.productPrice),
+                            productDiscount: parseFloat(data.productDiscount),
+                            productCategory: data.productCategory,
+                            productImgLink: data.productImgLink,
+                        };
+                    }
+                } 
+                else {
+                    const resultProduct = await response.json();
+                    if (this.editingProductId) {
+                         const productIndex = this.products.findIndex(p => p.id === this.editingProductId);
+                         if (productIndex !== -1) this.products[productIndex] = this._transformProductData(resultProduct);
+                    } 
+                    else {
+                         this.products.push(this._transformProductData(resultProduct));
+                    }
                 }
 
                 localStorage.setItem("products", JSON.stringify(this.products));
-                if (this.onProductsChange) {
-                    this.onProductsChange();
-                }
+                this.onProductsChange?.();
                 this.closeModal();
 
             } catch (error) {
                 console.error("Failed to save product:", error);
-                alert("Не вдалося зберегти продукт. Спробуйте пізніше.");
+                alert(`Не вдалося зберегти продукт. Перевірте консоль.`);
             }
         }
     }
-
+    
     async deleteProduct(id) {
         try {
             await fetch(`${this.apiUrl}/${id}`, { method: 'DELETE' });
-
             const productIndex = this.products.findIndex(p => p.id === id);
             if (productIndex !== -1) {
                 this.products.splice(productIndex, 1);
                 localStorage.setItem("products", JSON.stringify(this.products));
-                if (this.onProductsChange) {
-                    this.onProductsChange();
-                }
+                this.onProductsChange?.();
             }
-        } catch (error) {
+        } 
+        catch (error) {
             console.error("Failed to delete product:", error);
             alert("Не вдалося видалити продукт. Спробуйте пізніше.");
         }
     }
-    
+
     getProducts() {
         return this.products;
     }
