@@ -12,12 +12,10 @@ export class PaginationService {
 
         if (totalPages <= 1) return;
 
-        // Кнопка "Prev"
         this.container.appendChild(
             this._createButton('« Prev', this.currentPage - 1, this.currentPage === 1)
         );
 
-        // Логіка відображення номерів сторінок
         if (totalPages <= 7) {
             for (let i = 1; i <= totalPages; i++) {
                 this.container.appendChild(this._createButton(i, i));
@@ -40,7 +38,6 @@ export class PaginationService {
             this.container.appendChild(this._createButton(totalPages, totalPages));
         }
 
-        // Кнопка "Next"
         this.container.appendChild(
             this._createButton('Next »', this.currentPage + 1, this.currentPage === totalPages)
         );
