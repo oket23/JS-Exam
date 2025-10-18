@@ -20,7 +20,8 @@ export class PaginationService {
             for (let i = 1; i <= totalPages; i++) {
                 this.container.appendChild(this._createButton(i, i));
             }
-        } else {
+        } 
+        else {
             this.container.appendChild(this._createButton(1, 1));
             if (currentPage > 3) this.container.appendChild(this._createDots());
 

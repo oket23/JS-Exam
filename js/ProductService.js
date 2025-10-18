@@ -47,6 +47,7 @@ export class ProductService {
                 }
                 const productsFromApi = await response.json();
                 this.products = productsFromApi.map(p => this._transformProductData(p));
+
                 localStorage.setItem("products", JSON.stringify(this.products));
                 localStorage.setItem("products_last_fetch", Date.now());
             } 
@@ -122,6 +123,7 @@ export class ProductService {
 
             try {
                 let response;
+
                 if (this.editingProductId) {
                     const originalProduct = this.products.find(p => p.id === this.editingProductId);
                     dataToSend.id = this.editingProductId;
@@ -159,7 +161,7 @@ export class ProductService {
                             productDescription: data.productDescription,
                             productPrice: parseFloat(data.productPrice),
                             productDiscount: parseFloat(data.productDiscount),
-                            productCategory: data.productCategory,
+                            productCategory: data.productCategory, 
                             productImgLink: data.productImgLink,
                         };
                     }
@@ -208,7 +210,9 @@ export class ProductService {
 
     editProduct(id) {
         const productToEdit = this.products.find(p => p.id === id);
+
         if (!productToEdit) return;
+
         this.editingProductId = id;
         this.form.productTitle.value = productToEdit.productTitle;
         this.form.productDescription.value = productToEdit.productDescription;
@@ -216,6 +220,7 @@ export class ProductService {
         this.form.productDiscount.value = productToEdit.productDiscount;
         this.form.productCategory.value = productToEdit.productCategory;
         this.form.productImgLink.value = productToEdit.productImgLink;
+
         this.modalOverlay.querySelector('.modal-title').textContent = 'Edit product';
         this.submitBtn.textContent = 'Save changes';
         this.openModal();
